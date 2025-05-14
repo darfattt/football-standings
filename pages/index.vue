@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="mb-6 flex justify-between items-center">
-      <h1 class="text-2xl font-bold text-gray-900">Football Standings</h1>
+      <h1 class="text-2xl font-bold text-gray-900">Standings</h1>
       <div v-if="competitions && competitions.length > 0" class="flex items-center space-x-3">
         <label for="competition-select" class="text-sm font-medium text-gray-700">
           Select Competition:
