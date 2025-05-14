@@ -36,21 +36,6 @@
     </div>
     
     <div v-else>
-      <div v-if="debugInfo" class="mb-4 p-4 bg-gray-100 rounded overflow-auto max-h-40 text-xs">
-        <p><strong>Debug Info:</strong></p>
-        <p>Selected Competition: {{ selectedCompetition }}</p>
-        <p>Matches Count: {{ matchesCount }}</p>
-        <p>Calculated Standings Count: {{ standings.length }}</p>
-        <details>
-          <summary>Detailed Match Data</summary>
-          <p>First 3 matches:</p>
-          <pre>{{ JSON.stringify(matches.value?.slice(0, 3), null, 2) }}</pre>
-          
-          <p v-if="selectedCompetition">Filtered matches for {{ selectedCompetition }}:</p>
-          <pre v-if="selectedCompetition">{{ JSON.stringify(filteredMatches, null, 2) }}</pre>
-        </details>
-      </div>
-      
       <StandingsTable 
         :standings="standings || []" 
         :key="selectedCompetition"
@@ -66,7 +51,6 @@ import type { Match, Standing } from '~/types'
 import { useSupabase } from '~/utils/supabase'
 
 const { matches, loading, error, fetchMatches, createMatch } = useMatches()
-const debugInfo = ref(true) // Set to false in production
 
 const matchesCount = computed(() => {
   if (!matches.value) return 0
@@ -88,16 +72,6 @@ const competitions = computed(() => {
 const selectedCompetition = ref('')
 const standings = ref<Standing[]>([])
 
-// Add a computed property to show filtered matches for debugging
-const filteredMatches = computed(() => {
-  if (!selectedCompetition.value || !matches.value || !Array.isArray(matches.value)) 
-    return []
-  
-  return matches.value
-    .filter(match => match && match.competition === selectedCompetition.value)
-    .slice(0, 3) // Show only first 3 for brevity
-})
-
 function createTestMatch() {
   // Create a test match for a sample competition
   const testMatch = {
@@ -110,13 +84,11 @@ function createTestMatch() {
     matchweek: 1
   }
   
-  console.log('Creating test match:', testMatch)
   return createMatch(testMatch)
 }
 
 // Add a function to generate test data with multiple competitions
 async function generateTestData() {
-  console.log('Generating test data...')
   try {
     // Create several test matches
     const testMatches = [
@@ -170,26 +142,19 @@ async function generateTestData() {
       }
     ]
     
-    console.log(`Creating ${testMatches.length} test matches...`)
-    
     // Create a single match first for testing
     const firstMatch = testMatches[0]
     const result = await createMatch(firstMatch)
-    console.log('First test match created:', result)
     
     // If that works, create the rest
     if (result) {
-      console.log('First match created successfully, creating remaining matches...')
       for (let i = 1; i < testMatches.length; i++) {
         await createMatch(testMatches[i])
-        console.log(`Created test match ${i+1}/${testMatches.length}`)
       }
     }
     
     // Refresh matches
-    console.log('Test data generation complete, refreshing matches...')
     const refreshedMatches = await fetchMatches()
-    console.log(`Refreshed matches count: ${refreshedMatches.length}`)
     
   } catch (err) {
     console.error('Error generating test data:', err)
@@ -197,7 +162,7 @@ async function generateTestData() {
   }
 }
 
-// Function to directly check Supabase for matches (debug only)
+// Function to directly check Supabase for matches
 async function checkSupabaseDirectly() {
   try {
     const { supabase } = useSupabase()
@@ -205,10 +170,6 @@ async function checkSupabaseDirectly() {
       .from('matches')
       .select('*')
       .limit(5)
-    
-    console.log('Direct Supabase query result:')
-    console.log('Data:', data)
-    console.log('Error:', err)
     
     return { data, error: err }
   } catch (err) {
@@ -222,11 +183,6 @@ onMounted(async () => {
     // First check if database is properly set up
     const { supabase, initializeDatabase } = useSupabase()
     const dbStatus = await initializeDatabase()
-    console.log('Database initialization check result:', dbStatus)
-
-    // Direct check for debug purposes
-    const directCheck = await checkSupabaseDirectly()
-    console.log('Direct check completed')
 
     // If there's a database problem, set a helpful error
     if (!dbStatus.initialized) {
@@ -236,12 +192,9 @@ onMounted(async () => {
     
     // Fetch matches
     await fetchMatches()
-    console.log('Matches loaded:', matchesCount.value)
     
     // If no matches were found, create test data
     if (matchesCount.value === 0) {
-      console.log('No matches found, creating test data')
-      
       // Show a message while creating test data
       loading.value = true
       error.value = null
@@ -256,7 +209,6 @@ onMounted(async () => {
     // Set default selected competition if there is at least one
     if (competitions.value && competitions.value.length > 0) {
       selectedCompetition.value = competitions.value[0]
-      console.log('Default competition selected:', selectedCompetition.value)
       updateStandings()
     } else {
       // No competitions found even after adding test data
@@ -270,7 +222,6 @@ onMounted(async () => {
 })
 
 function changeCompetition() {
-  console.log('Competition changed to:', selectedCompetition.value)
   updateStandings()
 }
 
@@ -279,18 +230,14 @@ function updateStandings() {
   
   try {
     const { calculateStandings } = useMatches()
-    console.log('Competition selected:', selectedCompetition.value)
-    console.log('Matches available:', matches.value?.length || 0)
     
     if (!matches.value || matches.value.length === 0) {
-      console.warn('No matches available for calculating standings')
       standings.value = []
       return
     }
     
     // Get standings and ensure it's an array
-    const result = calculateStandings(selectedCompetition.value)
-    console.log('Calculated standings:', result)
+    const result = calculateStandings(selectedCompetition.value, matches)
     
     // Always ensure we set a valid array
     standings.value = Array.isArray(result) ? result : []

@@ -57,7 +57,6 @@ export const useMatches = () => {
     error.value = null
     
     try {
-      console.log('Fetching matches from Supabase...')
       const { data, error: err } = await supabase
         .from('matches')
         .select('*')
@@ -67,15 +66,10 @@ export const useMatches = () => {
         console.error('Supabase error when fetching matches:', err)
         
         // Fallback to localStorage if Supabase fails
-        console.log('Falling back to localStorage for matches')
         const localMatches = useLocalStorageFallback.getMatches()
-        console.log('LocalStorage matches:', localMatches.length)
         matches.value = localMatches
         return localMatches
       }
-      
-      console.log('Matches fetched successfully:', data?.length || 0)
-      console.log('First match:', data && data.length > 0 ? data[0] : 'No matches')
       
       matches.value = data || []
       return data
@@ -84,7 +78,6 @@ export const useMatches = () => {
       console.error('Error fetching matches:', err)
       
       // Fallback to localStorage
-      console.log('Falling back to localStorage due to error')
       const localMatches = useLocalStorageFallback.getMatches()
       matches.value = localMatches
       return localMatches
@@ -151,7 +144,6 @@ export const useMatches = () => {
     error.value = null
     
     try {
-      console.log('Creating new match:', match)
       const { data, error: err } = await supabase
         .from('matches')
         .insert([match])
@@ -161,7 +153,6 @@ export const useMatches = () => {
         console.error('Supabase error when creating match:', err)
         
         // Fallback to localStorage
-        console.log('Falling back to localStorage for match creation')
         const localMatch = useLocalStorageFallback.addMatch(match)
         
         // Refresh matches from localStorage
@@ -171,10 +162,7 @@ export const useMatches = () => {
         return localMatch
       }
       
-      console.log('Match created successfully:', data?.[0] || 'No data returned')
-      
       // Refresh matches
-      console.log('Refreshing matches after creating new match')
       await fetchMatches()
       return data?.[0]
     } catch (err: any) {
@@ -182,7 +170,6 @@ export const useMatches = () => {
       console.error('Error creating match:', err)
       
       // Fallback to localStorage
-      console.log('Falling back to localStorage due to error')
       const localMatch = useLocalStorageFallback.addMatch(match)
       
       // Refresh matches from localStorage
@@ -259,26 +246,17 @@ export const useMatches = () => {
   }
   
   // Calculate standings for a competition
-  const calculateStandings = (competitionName: string): Standing[] => {
-    console.log('calculateStandings called with:', competitionName)
-    
+  const calculateStandings = (competitionName: string, matches: any): Standing[] => {
     if (!competitionName || !matches.value || !Array.isArray(matches.value)) {
-      console.warn('Invalid competition name or matches data for calculating standings')
       return []
     }
     
-    console.log('Competition:', competitionName)
-    console.log('Matches array length:', matches.value.length)
-    
     // Filter matches by competition
-    const competitionMatches = matches.value.filter(match => 
+    const competitionMatches = matches.value.filter((match: Match) => 
       match && match.competition === competitionName
     )
     
-    console.log('Filtered matches for competition:', competitionMatches.length)
-    
     if (competitionMatches.length === 0) {
-      console.warn('No matches found for competition:', competitionName)
       return []
     }
     
@@ -297,13 +275,10 @@ export const useMatches = () => {
       }>()
       
       // Process each match to update team stats
-      competitionMatches.forEach(match => {
+      competitionMatches.forEach((match: Match) => {
         if (!match || !match.home || !match.away) {
-          console.warn('Skipping invalid match:', match)
           return
         }
-        
-        console.log(`Processing match: ${match.home} ${match.score_home} - ${match.score_away} ${match.away}`)
         
         // Initialize team stats if not exists
         if (!teamStats.has(match.home)) {
@@ -374,8 +349,6 @@ export const useMatches = () => {
         teamStats.set(match.away, awayStats)
       })
       
-      console.log('Team stats calculated:', teamStats.size, 'teams')
-      
       // Convert map to array and sort by points, goal difference, goals for
       const standings: Standing[] = []
       teamStats.forEach((stats, team) => {
@@ -420,7 +393,6 @@ export const useMatches = () => {
         standing.position = index + 1
       })
       
-      console.log('Final standings calculated:', standings.length, 'teams')
       return standings
     } catch (err) {
       console.error('Error calculating standings:', err)

@@ -71,7 +71,7 @@ const props = defineProps<{
   matches: Match[]
 }>()
 
-const debug = ref(false)  // Set to true for debugging
+const debug = ref(false)  // Set to false to hide debug info
 
 // Filter out invalid matches and ensure we have a valid array
 const validMatches = computed(() => {

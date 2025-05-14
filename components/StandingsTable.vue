@@ -128,7 +128,7 @@ const props = defineProps<{
   standings: Standing[]
 }>()
 
-const debug = ref(true) // Set to false in production
+const debug = ref(false) // Set to false to hide debug info
 
 // Log props when component mounts
 onMounted(() => {
