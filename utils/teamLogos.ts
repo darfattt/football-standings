@@ -19,7 +19,7 @@ export const teamLogoMap: TeamLogoMap = {
   'B-One': 'b_one',
   'GWN FC': 'gwn_fc',
   'Funball': 'funball',
-  'Siliwangi': 'siliwangi',
+  'Siliwangi': 'siliwangiutd',
   'Bandung Mengbal': 'bandung_mengbal',
   'Ilgie Parahyangan': 'ilgie_parahyangan',
   'World Young United': 'world_young_united',
