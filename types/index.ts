@@ -36,4 +36,32 @@ export interface Competition {
   teams?: Team[]
   matches?: Match[]
   standings?: Standing[]
+}
+
+// FDR (Fixture Difficulty Rating) related types
+export enum DifficultyLevel {
+  VeryEasy = 1,
+  Easy = 2,
+  Medium = 3,
+  Hard = 4,
+  VeryHard = 5
+}
+
+export interface TeamDifficulty {
+  team: string
+  difficultyScore: number
+  difficultyLevel: DifficultyLevel
+}
+
+export interface FixtureWithDifficulty {
+  matchweek: number
+  date: string
+  opponent: string
+  isHome: boolean
+  difficulty: DifficultyLevel
+}
+
+export interface TeamFixtures {
+  team: string
+  fixtures: FixtureWithDifficulty[]
 } 

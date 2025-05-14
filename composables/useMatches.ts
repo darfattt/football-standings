@@ -246,7 +246,8 @@ export const useMatches = () => {
   }
   
   // Calculate standings for a competition
-  const calculateStandings = (competitionName: string, matches: any): Standing[] => {
+  const calculateStandings = (competitionName: string, paramMatches: any): Standing[] => {
+    matches.value = paramMatches.value;
     if (!competitionName || !matches.value || !Array.isArray(matches.value)) {
       return []
     }

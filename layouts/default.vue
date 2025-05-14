@@ -12,6 +12,20 @@
             >
               Standings
             </NuxtLink>
+            <!-- <NuxtLink 
+              to="/progress" 
+              class="px-3 py-2 rounded-md text-sm font-medium hover:bg-purple-100"
+              :class="{ 'bg-purple-100 text-purple-900': $route.path === '/progress' }"
+            >
+              Progress
+            </NuxtLink> -->
+            <NuxtLink 
+              to="/fixture-difficulty" 
+              class="px-3 py-2 rounded-md text-sm font-medium hover:bg-purple-100"
+              :class="{ 'bg-purple-100 text-purple-900': $route.path === '/fixture-difficulty' }"
+            >
+              FDR
+            </NuxtLink>
             <NuxtLink 
               to="/matches" 
               class="px-3 py-2 rounded-md text-sm font-medium hover:bg-purple-100"

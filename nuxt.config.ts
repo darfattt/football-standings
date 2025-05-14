@@ -4,6 +4,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ['@nuxtjs/tailwindcss'],
   ssr: false,
+  debug: true,
   runtimeConfig: {
     public: {
       supabaseUrl: process.env.SUPABASE_URL || 'https://oolkuvhrpsvpfkvutaav.supabase.co',
