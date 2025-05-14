@@ -3,8 +3,8 @@ export interface Match {
   competition: string
   date: string
   home: string
-  score_home: number
-  score_away: number
+  score_home: number | null
+  score_away: number | null
   away: string
   matchweek: number
 }

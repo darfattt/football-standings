@@ -139,6 +139,64 @@ async function generateTestData() {
         score_home: 1,
         score_away: 0,
         matchweek: 1
+      },
+      
+      // Indonesian League
+      {
+        competition: 'Indonesian League',
+        date: new Date().toISOString().split('T')[0],
+        home: 'Germanesia',
+        away: 'B-One',
+        score_home: 3,
+        score_away: 1,
+        matchweek: 1
+      },
+      {
+        competition: 'Indonesian League',
+        date: new Date().toISOString().split('T')[0],
+        home: 'GWN FC',
+        away: 'Funball',
+        score_home: 0,
+        score_away: 0,
+        matchweek: 1
+      },
+      {
+        competition: 'Indonesian League',
+        date: new Date().toISOString().split('T')[0],
+        home: 'Siliwangi',
+        away: 'Bandung Mengbal',
+        score_home: 2,
+        score_away: 1,
+        matchweek: 1
+      },
+      {
+        competition: 'Indonesian League',
+        date: new Date().toISOString().split('T')[0],
+        home: 'Ilgie Parahyangan',
+        away: 'World Young United',
+        score_home: 3,
+        score_away: 2,
+        matchweek: 1
+      },
+      
+      // Indonesian League - Matchweek 2
+      {
+        competition: 'Indonesian League',
+        date: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 1 week in the future
+        home: 'B-One',
+        away: 'GWN FC',
+        score_home: null,
+        score_away: null,
+        matchweek: 2
+      },
+      {
+        competition: 'Indonesian League',
+        date: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 1 week in the future
+        home: 'Funball',
+        away: 'Siliwangi',
+        score_home: null,
+        score_away: null,
+        matchweek: 2
       }
     ]
     

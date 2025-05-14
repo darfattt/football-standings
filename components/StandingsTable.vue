@@ -68,18 +68,29 @@
                   <svg v-else-if="standing.previousPosition < standing.position" class="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                   </svg>
-                  <span v-else class="inline-block w-3 h-1 bg-gray-300 mx-1"></span>
+                  <!-- <span v-else class="inline-block w-3 h-1 bg-gray-300 mx-1"></span> -->
                 </div>
                 <div v-else class="ml-1">
-                  <span class="inline-block w-3 h-1 bg-gray-300 mx-1"></span>
+                  <!-- <span class="inline-block w-3 h-1 bg-gray-300 mx-1"></span> -->
                 </div>
               </div>
             </td>
             <td class="px-3 py-4 whitespace-nowrap">
               <div class="flex items-center">
                 <div class="flex-shrink-0 h-6 w-6">
-                  <!-- Logo placeholder, could be replaced with actual team logos -->
-                  <div class="bg-gray-200 h-6 w-6 rounded-full"></div>
+                  <!-- Team logo using multiple possible filenames -->
+                  <template v-if="!logoErrors[standing.club]">
+                    <img 
+                      :src="`/img/logo/${getTeamLogoFilename(standing.club)}`" 
+                      :alt="`${standing.club} logo`"
+                      class="h-6 w-6 rounded-full object-cover"
+                      @error="() => handleLogoError(standing.club)"
+                    />
+                  </template>
+                  <!-- Fallback to initials in a circle if no logo found -->
+                  <div v-else class="bg-gray-200 h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold text-gray-600">
+                    {{ getInitials(standing.club) }}
+                  </div>
                 </div>
                 <div class="ml-4">
                   <div class="text-sm font-medium text-gray-900">{{ standing.club }}</div>
@@ -135,14 +146,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, watch, ref } from 'vue'
+import { computed, ref } from 'vue'
 import type { Standing } from '~/types'
+import { getTeamLogoFilename } from '~/utils/teamLogos'
 
 const props = defineProps<{
   standings: Standing[]
 }>()
 
 const debug = ref(false) // Set to false to hide debug info
+const logoErrors = ref<Record<string, boolean>>({})
 
 const validStandings = computed(() => {
   if (!props.standings || !Array.isArray(props.standings)) {
@@ -151,4 +164,21 @@ const validStandings = computed(() => {
   
   return props.standings
 })
+
+// Track which logos failed to load
+function handleLogoError(teamName: string): void {
+  logoErrors.value[teamName] = true
+}
+
+// Get initials for fallback display
+function getInitials(name: string): string {
+  if (!name) return '?'
+  
+  // Split on spaces and get first letter of each word
+  const words = name.split(/\s+/)
+  if (words.length === 1) return name.charAt(0).toUpperCase()
+  
+  // For compound names, get first letter of first and last words
+  return (words[0].charAt(0) + words[words.length - 1].charAt(0)).toUpperCase()
+}
 </script> 
