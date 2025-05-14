@@ -59,7 +59,21 @@
           </tr>
           <tr v-for="standing in validStandings" :key="standing.club">
             <td class="px-3 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-900 font-medium">{{ standing.position }}</div>
+              <div class="flex items-center">
+                <div class="text-sm text-gray-900 font-medium">{{ standing.position }}</div>
+                <div v-if="standing.previousPosition && standing.previousPosition !== standing.position" class="ml-1">
+                  <svg v-if="standing.previousPosition > standing.position" class="w-3 h-3 text-green-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                  </svg>
+                  <svg v-else-if="standing.previousPosition < standing.position" class="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                  </svg>
+                  <span v-else class="inline-block w-3 h-1 bg-gray-300 mx-1"></span>
+                </div>
+                <div v-else class="ml-1">
+                  <span class="inline-block w-3 h-1 bg-gray-300 mx-1"></span>
+                </div>
+              </div>
             </td>
             <td class="px-3 py-4 whitespace-nowrap">
               <div class="flex items-center">
@@ -130,27 +144,11 @@ const props = defineProps<{
 
 const debug = ref(false) // Set to false to hide debug info
 
-// Log props when component mounts
-onMounted(() => {
-  console.log('StandingsTable mounted, props:', props.standings)
-})
-
-// Watch for changes in the standings prop
-watch(() => props.standings, (newVal) => {
-  console.log('Standings prop changed:', newVal)
-}, { deep: true })
-
 const validStandings = computed(() => {
-  console.log('StandingsTable props received:', props.standings)
-  console.log('Is array?', Array.isArray(props.standings))
-  console.log('Length:', props.standings?.length)
-  
   if (!props.standings || !Array.isArray(props.standings)) {
-    console.log('Returning empty array because standings is not valid')
     return []
   }
   
-  console.log('Returning standings data:', props.standings)
   return props.standings
 })
 </script> 

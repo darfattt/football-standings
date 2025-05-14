@@ -16,6 +16,7 @@ export interface Team {
 
 export interface Standing {
   position: number
+  previousPosition?: number // Previous week's position for trend indicator
   club: string
   played: number
   won: number
